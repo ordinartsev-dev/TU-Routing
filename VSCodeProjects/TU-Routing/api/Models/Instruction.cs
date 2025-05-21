@@ -11,7 +11,7 @@ namespace Backend.Models
         [JsonPropertyName("sign")]
         public int sign { get; set; }
         [JsonPropertyName("interval")]
-        public int interval [] { get; set; }
+        public int[] interval { get; set; }
         [JsonPropertyName("text")]
         public string text { get; set; }
         [JsonPropertyName("time")]
@@ -21,9 +21,5 @@ namespace Backend.Models
         [JsonPropertyName("last_heading")]
         public double last_heading { get; set; }
 
-        public string PrintName()
-        {
-            return $"Stop Name: {Name ?? "[not specified]"}";
-        }
     }
 }

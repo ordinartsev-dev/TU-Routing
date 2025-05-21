@@ -15,11 +15,11 @@ namespace Backend.Models
         [JsonPropertyName("points_encoded")]
         public bool points_encoded { get; set; }
         [JsonPropertyName("bbox")]
-        public double [] bbox { get; set; }
+        public double[] bbox { get; set; }
         [JsonPropertyName("points")]
         public string points { get; set; }
         [JsonPropertyName("instructions")]
-        public Instruction [] instructions{ get; set; }
+        public Instruction[] instructions{ get; set; }
         [JsonPropertyName("legs")]
         public List<object> legs { get; set; }
         [JsonPropertyName("details")]
@@ -30,10 +30,5 @@ namespace Backend.Models
         public double descend { get; set; }
         [JsonPropertyName("snapped_waypoints")]
         public string snapped_waypoints { get; set; }
-
-        public string PrintName()
-        {
-            return $"Stop Name: {Name ?? "[not specified]"}";
-        }
     }
 }

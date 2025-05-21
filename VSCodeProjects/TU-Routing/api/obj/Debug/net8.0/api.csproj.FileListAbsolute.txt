@@ -31,3 +31,4 @@
 /Users/egorordinarcev/VSCodeProjects/TU-Routing/api/obj/Debug/net8.0/api.pdb
 /Users/egorordinarcev/VSCodeProjects/TU-Routing/api/obj/Debug/net8.0/api.genruntimeconfig.cache
 /Users/egorordinarcev/VSCodeProjects/TU-Routing/api/obj/Debug/net8.0/ref/api.dll
+/Users/egorordinarcev/VSCodeProjects/TU-Routing/api/obj/Debug/net8.0/api.sourcelink.json

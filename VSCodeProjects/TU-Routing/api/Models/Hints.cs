@@ -4,20 +4,10 @@ namespace Backend.Models
 {
     public class Hints
     {
-        [JsonPropertyName("type")]
+        [JsonPropertyName("visited_nodes_sum")]
         public int visited_nodes_sum { get; set; }
-        [JsonPropertyName("id")]
+
+        [JsonPropertyName("visited_nodes_average")]
         public int visited_nodes_average { get; set; }
-
-        public string PrintName()
-        {
-            return $"Stop Name: {Name ?? "[not specified]"}";
-        }
-    }
-
-        public string PrintName()
-        {
-            return $"Stop Name: {Name ?? "[not specified]"}";
-        }
     }
 }

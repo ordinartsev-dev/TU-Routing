@@ -8,10 +8,5 @@ namespace Backend.Models
         public string [] copyrights { get; set; }
         [JsonPropertyName("took")]
         public int took { get; set; }
-
-        public string PrintName()
-        {
-            return $"Stop Name: {Name ?? "[not specified]"}";
-        }
     }
 }

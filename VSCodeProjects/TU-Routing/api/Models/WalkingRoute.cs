@@ -9,12 +9,11 @@ namespace Backend.Models
         [JsonPropertyName("info")]
         public Info Info{ get; set; }
         [JsonPropertyName("paths")]
-        public Path [] Path{ get; set; }
-        
+        public Path[] Path{ get; set; }
 
-        public string PrintName()
+        public string PrintLength()
         {
-            return $"Stop Name: {Name ?? "[not specified]"}";
+            return $"Walking route length: {Path.distance ?? "[not specified]"}";
         }
     }
 }
