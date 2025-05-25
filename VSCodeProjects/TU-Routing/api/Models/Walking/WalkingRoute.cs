@@ -13,7 +13,12 @@ namespace Backend.Models
 
         public string PrintLength()
         {
-            return $"Walking route length: {Path.distance ?? "[not specified]"}";
+            if (Path == null || Path.Length == 0)
+            {
+                return "Walking route length: [not specified]";
+            }
+
+            return $"Walking route length: {Path[0].distance}";
         }
     }
 }

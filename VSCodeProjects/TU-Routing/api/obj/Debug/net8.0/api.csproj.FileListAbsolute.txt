@@ -17,6 +17,7 @@
 /Users/egorordinarcev/VSCodeProjects/TU-Routing/api/obj/Debug/net8.0/api.csproj.CoreCompileInputs.cache
 /Users/egorordinarcev/VSCodeProjects/TU-Routing/api/obj/Debug/net8.0/api.MvcApplicationPartsAssemblyInfo.cs
 /Users/egorordinarcev/VSCodeProjects/TU-Routing/api/obj/Debug/net8.0/api.MvcApplicationPartsAssemblyInfo.cache
+/Users/egorordinarcev/VSCodeProjects/TU-Routing/api/obj/Debug/net8.0/api.sourcelink.json
 /Users/egorordinarcev/VSCodeProjects/TU-Routing/api/obj/Debug/net8.0/staticwebassets.build.json
 /Users/egorordinarcev/VSCodeProjects/TU-Routing/api/obj/Debug/net8.0/staticwebassets.development.json
 /Users/egorordinarcev/VSCodeProjects/TU-Routing/api/obj/Debug/net8.0/staticwebassets/msbuild.api.Microsoft.AspNetCore.StaticWebAssets.props
@@ -31,4 +32,3 @@
 /Users/egorordinarcev/VSCodeProjects/TU-Routing/api/obj/Debug/net8.0/api.pdb
 /Users/egorordinarcev/VSCodeProjects/TU-Routing/api/obj/Debug/net8.0/api.genruntimeconfig.cache
 /Users/egorordinarcev/VSCodeProjects/TU-Routing/api/obj/Debug/net8.0/ref/api.dll
-/Users/egorordinarcev/VSCodeProjects/TU-Routing/api/obj/Debug/net8.0/api.sourcelink.json

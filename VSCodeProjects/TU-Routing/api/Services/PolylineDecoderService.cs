@@ -43,4 +43,14 @@ namespace Backend.Services
             return poly;
         }
     }
+
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            // Example usage
+            var path = new { Path = new[] { new { points = "encodedPolylineString" } } };
+            Console.WriteLine("Route points decoded:" + string.Join(", ", PolylineDecoder.Decode(path.Path[0].points)));
+        }
+    }
 }

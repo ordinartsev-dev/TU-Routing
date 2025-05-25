@@ -31,8 +31,8 @@ namespace Backend.Controllers
             [FromQuery] double toLat,
             [FromQuery] double toLon)
         {
-            var result = await _graphHopperService.GetRouteAsync(fromLat, fromLon, toLat, toLon);
-            return Ok(result);
+            var (obj, response) = await _graphHopperService.GetRouteAsync(fromLat, fromLon, toLat, toLon);
+            return Ok(response);
         }
 
         [HttpGet("transit")]
