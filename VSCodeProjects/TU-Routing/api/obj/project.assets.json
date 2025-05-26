@@ -482,19 +482,19 @@
     ]
   },
   "packageFolders": {
-    "/Users/egorordinarcev/.nuget/packages/": {}
+    "C:\\Users\\Egor Ordinartsev\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/egorordinarcev/VSCodeProjects/TU-Routing/api/api.csproj",
+      "projectUniqueName": "C:\\Users\\Egor Ordinartsev\\TU-Routing\\VSCodeProjects\\TU-Routing\\api\\api.csproj",
       "projectName": "api",
-      "projectPath": "/Users/egorordinarcev/VSCodeProjects/TU-Routing/api/api.csproj",
-      "packagesPath": "/Users/egorordinarcev/.nuget/packages/",
-      "outputPath": "/Users/egorordinarcev/VSCodeProjects/TU-Routing/api/obj/",
+      "projectPath": "C:\\Users\\Egor Ordinartsev\\TU-Routing\\VSCodeProjects\\TU-Routing\\api\\api.csproj",
+      "packagesPath": "C:\\Users\\Egor Ordinartsev\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Egor Ordinartsev\\TU-Routing\\VSCodeProjects\\TU-Routing\\api\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/egorordinarcev/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\Egor Ordinartsev\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -551,16 +551,8 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.408/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.409/PortableRuntimeIdentifierGraph.json"
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1900",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Error occurred while getting package vulnerability data: Access to the path '/Users/egorordinarcev/.local/share' is denied."
-    }
-  ]
+  }
 }

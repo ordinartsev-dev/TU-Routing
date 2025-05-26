@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  tubify-route-manager:
+    container_name:  tubify-route-manager
+    image:  tubify-route-manager
+    ports:
+      - "5500:8080"    
+    networks:
+      - tubify-net
+networks:
+  tubify-net:
+    external: true

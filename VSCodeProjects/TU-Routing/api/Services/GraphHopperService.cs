@@ -21,7 +21,7 @@ namespace Backend.Services
         {
             try
             {
-                string url = $"http://localhost:8989/route?point={fromLat},{fromLon}&point={toLat},{toLon}&vehicle=foot&locale=ru&instructions=true";
+                string url = $"http://graphhopper-tuu:8989/route?point={fromLat},{fromLon}&point={toLat},{toLon}&vehicle=foot&locale=ru&instructions=true";
                 
                 HttpResponseMessage response = await _httpClient.GetAsync(url);
                 response.EnsureSuccessStatusCode();
