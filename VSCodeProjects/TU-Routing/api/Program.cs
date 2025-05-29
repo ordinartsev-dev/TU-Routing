@@ -17,7 +17,8 @@ builder.Services.AddHttpClient<TransitRouteService>();
 builder.Services.AddHttpClient<FindTheNearestStationService>();
 builder.Services.AddScoped<HybridRouteService>();
 builder.Services.AddScoped<FindTheNearestStationService>();
-
+builder.Services.AddScoped<FindScooterService>();
+builder.Services.AddScoped<ScooterRouteService>();
 
 
 

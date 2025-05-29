@@ -39,12 +39,12 @@ namespace Backend.Services
             return (obj, jsonResponse);
         }
 
-        public async Task<TransitRoute> generateTransitRoute(PublicTransportStop stop1, PublicTransportStop stop2)
+        public async Task<TransitRoute> generateTransitRoute(PublicTransportStop stop1, PublicTransportStop stop2, string depatureTime)
         //public async Task<string> generateTransitRoute(PublicTransportStop stop1, PublicTransportStop stop2)
         {
             
             var part2 = await _transitRouteService.CalculateTransitRouteAsync(stop1.Location.Latitude, stop1.Location.Longitude,
-                                                                                 stop2.Location.Latitude, stop2.Location.Longitude);
+                                                                                 stop2.Location.Latitude, stop2.Location.Longitude, depatureTime);
 
             return part2;
         }
@@ -76,13 +76,31 @@ namespace Backend.Services
             //Decode the polyline for the first walking part
             var decodedPoints1 = PolylineDecoder.Decode(part1.Path[0].points);
 
+            // fetch time of the first walking part
+            var walkingTime1 = part1.Path[0].time;
+
+            // fetch current time
+            DateTime currentTime = DateTime.Now;
+            Console.WriteLine("Current time: " + currentTime.ToString("yyyy-MM-ddTHH:mm:ssZ"));
+            Console.WriteLine("Walking time to the first station: " + walkingTime1 + " milliseconds");
+
+            // Calculate the arrival time at the first station
+            DateTime arrivalTime1 = currentTime.AddMilliseconds(walkingTime1);
+            Console.WriteLine("Arrival time at the first station: " + arrivalTime1.ToString("yyyy-MM-ddTHH:mm:ssZ"));
+
             //Generate the transit route
-            var part2 = await generateTransitRoute(nearestStation1, nearestStation2);
+            var part2 = await generateTransitRoute(nearestStation1, nearestStation2, depatureTime: arrivalTime1.ToString("yyyy-MM-ddTHH:mm:ssZ"));
             Console.WriteLine(part2);
             string part4 = JsonSerializer.Serialize(part2);
 
             //Generate the route to the endpoint
             var (part3, jresponse2) = await generateRouteToEndPoint(nearestStation2.Location.Latitude, nearestStation2.Location.Longitude, toLat, toLon);
+            var walkingTime2 = part3.Path[0].time;
+            Console.WriteLine("Walking time from the second station: " + walkingTime2 + " milliseconds");
+
+            // overall time of the route
+            var overalltime = (walkingTime1 + walkingTime2)/ 1000; // in seconds
+            Console.WriteLine("Overall time of the route: " + overalltime + " seconds");
             //Decode the polyline for the second walking part
 
             var decodedPoints2 = PolylineDecoder.Decode(part3.Path[0].points);
@@ -94,7 +112,7 @@ namespace Backend.Services
                 Start = new List<double> { decodedPoints1[0].Latitude, decodedPoints1[0].Longitude },
                 End = new List<double> { decodedPoints2[decodedPoints2.Count - 1].Latitude, decodedPoints2[decodedPoints2.Count - 1].Longitude },
                 DistanceMeters = 0,
-                DurationSeconds = 0,
+                DurationSeconds = overalltime,
                 WalkToTransportPolyline = decodedPoints1.Select(point => new List<double> { point.Latitude, point.Longitude }).ToList(),
                 TransportPolyline = part2.routes.SelectMany(route => route.legs.SelectMany(leg => leg.stopovers.Select(stopover => new List<double> { stopover.latitude, stopover.longitude }))).ToList(),
                 WalkFromTransportPolyline = decodedPoints2.Select(point => new List<double> { point.Latitude, point.Longitude }).ToList(),
