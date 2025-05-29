@@ -7,45 +7,49 @@ using Backend.Models;
 
 namespace Backend.Services
 {
-    public class TransitRouteService
+    public class FindScooterService
     {
         private readonly HttpClient _httpClient;
 
-        public TransitRouteService(HttpClient httpClient)
+        public FindScooterService(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
 
-        //public async Task<string> CalculateTransitRouteAsync(double fromLat, double fromLon, double toLat, double toLon)
-        public async Task<TransitRoute> CalculateTransitRouteAsync(double fromLat, double fromLon, double toLat, double toLon, string deptime)
+        //public async Task<string> FindScooterAsync(double Lat, double Lon)
+        public async Task<BikeResponse> FindScooterAsync(double Lat, double Lon)
         {
             try
             {
-                string url = $"http://localhost:8000/api/routes?from={fromLat},{fromLon}&to={toLat},{toLon}&departure={deptime}&stopovers=true";
+                string url = $"http://localhost:8000/api/bikes/nearby?coords={Lat},{Lon}&radius=500&limit=10";
             
                 HttpResponseMessage response = await _httpClient.GetAsync(url);
                 response.EnsureSuccessStatusCode();
                 string jsonResponse = await response.Content.ReadAsStringAsync();
+                //return jsonResponse;
                 
+
                 // Deserialize the JSON response if needed
+                
                 var options = new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true,
                     IncludeFields = true
                 };
-                var route = JsonSerializer.Deserialize<TransitRoute>(jsonResponse, options);
-                if (route != null)
+                var bikes = JsonSerializer.Deserialize<BikeResponse>(jsonResponse, options);
+                if (bikes != null)
                 {
                     //return JsonSerializer.Serialize(route); // Return the serialized path
-                    Console.WriteLine("Route found! Route length:" + route.routes[0].PrintRouteDetails());
-                    //return "Serialized:" + JsonSerializer.Serialize(route);
-                    return route;
+                    //Console.WriteLine("Route found! Route length:" + bikes.[0.PrintRouteDetails());
+                    //return "Serialized:" + JsonSerializer.Serialize(bikes);
+                    return bikes;
                 }
                 else
                 {
                     Console.WriteLine("No route found.");
                     return null;
                 }
+                
             }
             catch (HttpRequestException e)
             {
