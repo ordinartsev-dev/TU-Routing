@@ -7,7 +7,7 @@ namespace Backend.Models
 {
     public class RouteResponce
     {
-        public string RouteId { get; set; }
+        public string Type { get; set; }
 
         public List<double> Start { get; set; }
 

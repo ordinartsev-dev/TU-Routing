@@ -16,11 +16,11 @@ namespace Backend.Services
             _httpClient = httpClient;
         }
 
-        public async Task<PublicTransportStop> FindTheNearestStationServiceAsync(double Lat, double Lon)
+        public async Task<PublicTransportStop[]> FindTheNearestStationServiceAsync(double Lat, double Lon)
         {
             try 
             {
-                string url = $"https://v6.bvg.transport.rest/locations/nearby?latitude={Lat}&longitude={Lon}&results=3";
+                string url = $"https://v6.bvg.transport.rest/locations/nearby?latitude={Lat}&longitude={Lon}&results=2";
                 
                 HttpResponseMessage response = await _httpClient.GetAsync(url);
                 response.EnsureSuccessStatusCode();
@@ -37,8 +37,12 @@ namespace Backend.Services
                 var stops = JsonSerializer.Deserialize<PublicTransportStop[]>(jsonResponse, options);
                 if (stops != null && stops.Length > 0)
                 {
-                    Console.WriteLine(stops[0].PrintName());
-                    return stops[0]; // Return the first stop
+                    foreach (var stop in stops)
+                    {
+                        Console.WriteLine(stop.PrintName());
+                    }
+                    //Console.WriteLine(stops[0].PrintName());
+                    return stops; // Return the first stop
                 }
                 else
                 {

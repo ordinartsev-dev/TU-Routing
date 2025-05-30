@@ -482,19 +482,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Egor Ordinartsev\\.nuget\\packages\\": {}
+    "/home/egorich/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Egor Ordinartsev\\TU-Routing\\VSCodeProjects\\TU-Routing\\api\\api.csproj",
+      "projectUniqueName": "/mnt/c/Users/Egor Ordinartsev/TU-Routing/VSCodeProjects/TU-Routing/api/api.csproj",
       "projectName": "api",
-      "projectPath": "C:\\Users\\Egor Ordinartsev\\TU-Routing\\VSCodeProjects\\TU-Routing\\api\\api.csproj",
-      "packagesPath": "C:\\Users\\Egor Ordinartsev\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Egor Ordinartsev\\TU-Routing\\VSCodeProjects\\TU-Routing\\api\\obj\\",
+      "projectPath": "/mnt/c/Users/Egor Ordinartsev/TU-Routing/VSCodeProjects/TU-Routing/api/api.csproj",
+      "packagesPath": "/home/egorich/.nuget/packages/",
+      "outputPath": "/mnt/c/Users/Egor Ordinartsev/TU-Routing/VSCodeProjects/TU-Routing/api/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Egor Ordinartsev\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/home/egorich/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -551,7 +551,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.409/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.409/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

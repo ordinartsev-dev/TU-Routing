@@ -53,7 +53,7 @@ namespace Backend.Services
 
                     RouteResponce FootRouting = new RouteResponce
                     {
-                        RouteId = "RouteId",
+                        Type = "Walking",
                         Start = new List<double> { decodedPoints[0].Latitude, decodedPoints[0].Longitude },
                         End = new List<double> { decodedPoints[decodedPoints.Count - 1].Latitude, decodedPoints[decodedPoints.Count - 1].Longitude },
                         DistanceMeters = path.Path[0].distance,
@@ -133,7 +133,7 @@ namespace Backend.Services
 
                     RouteResponce cycleRouting = new RouteResponce
                     {
-                        RouteId = "RouteId",
+                        Type = "Cycling",
                         Start = new List<double> { decodedPoints[0].Latitude, decodedPoints[0].Longitude },
                         End = new List<double> { decodedPoints[decodedPoints.Count - 1].Latitude, decodedPoints[decodedPoints.Count - 1].Longitude },
                         DistanceMeters = path.Path[0].distance,

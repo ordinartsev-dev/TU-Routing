@@ -33,7 +33,7 @@ namespace Backend.Services
 
         public async Task<string> findRouteToEndPoint(double fromLat, double fromLon, double toLat, double toLon)
         {
-            var (routeToEndPoint, response) = await _graphHopperService.GetRouteAsync(fromLat, fromLon, toLat, toLon);
+            var (routeToEndPoint, response) = await _graphHopperService.GetCyclingRouteAsync(fromLat, fromLon, toLat, toLon);
             if (routeToEndPoint == null)
             {
                 return "No route found to the endpoint.";
