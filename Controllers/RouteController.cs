@@ -15,11 +15,14 @@ namespace Backend.Controllers
         private readonly HybridRouteService _hybridRouteService;
         private readonly FindScooterService _findScooterService;
         private readonly ScooterRouteService _scooterRouteService;
+        private readonly FetchAllPointers _fetchAllPointers;
 
 
         public RouteController(GraphHopperService graphHopperService,
-         TransitRouteService transitRouteService, FindTheNearestStationService findTheNearestStationService,
-         HybridRouteService hybridRouteService, FindScooterService findScooterService, ScooterRouteService scooterRouteService)
+            TransitRouteService transitRouteService, FindTheNearestStationService findTheNearestStationService,
+            HybridRouteService hybridRouteService, FindScooterService findScooterService,
+            ScooterRouteService scooterRouteService,
+            FetchAllPointers fetchAllPointers)
         {
             _graphHopperService = graphHopperService;
             _transitRouteService = transitRouteService;
@@ -27,6 +30,7 @@ namespace Backend.Controllers
             _hybridRouteService = hybridRouteService;
             _findScooterService = findScooterService;
             _scooterRouteService = scooterRouteService;
+            _fetchAllPointers = fetchAllPointers;
         }
 
         [HttpGet("walking")]
@@ -89,11 +93,17 @@ namespace Backend.Controllers
             [FromQuery] double toLat,
             [FromQuery] double toLon)
         {
-            // Вызываем все 3 части маршрута
-            var result = await _hybridRouteService.generateHybridRoute(fromLat, fromLon, toLat, toLon);
             
-            return Ok(result);
-        }   
+            var result = await _hybridRouteService.generateHybridRoute(fromLat, fromLon, toLat, toLon);
 
+            return Ok(result);
+        }
+
+        [HttpGet("all-pointers")]
+        public async Task<IActionResult> GetAllPointers()
+        {
+            var pointers = await _fetchAllPointers.GetAllPointersAsync();
+            return Ok(pointers);
+        }
     }
 }

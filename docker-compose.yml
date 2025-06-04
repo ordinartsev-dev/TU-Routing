@@ -1,14 +1,16 @@
-version: '3.8'
-
 services:
   tubify-route-manager:
     container_name:  tubify-route-manager
     image:  tubify-route-manager
+    build:
+      context: .
+      dockerfile: Dockerfile
     expose:
       - "5500"
     environment:
       - ASPNETCORE_URLS=http://+:5500
       - ASPNETCORE_ENVIRONMENT=Production
+      - DB_CONNECTION_STRING=${DB_CONNECTION_STRING}
     networks:
       - tubify-net
 
