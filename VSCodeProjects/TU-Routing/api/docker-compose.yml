@@ -4,10 +4,13 @@ services:
   tubify-route-manager:
     container_name:  tubify-route-manager
     image:  tubify-route-manager
-    ports:
-      - "5500:8080"    
+    expose:
+      - "5500"
+    environment:
+      - ASPNETCORE_URLS=http://+:5500
     networks:
       - tubify-net
+
 networks:
   tubify-net:
     external: true
