@@ -11,6 +11,8 @@ namespace Backend.Services
     {
         private readonly HttpClient _httpClient;
 
+        private const string GraphHopperUrl = "http://tubify-graphhopper:8989/route";
+
         public GraphHopperService(HttpClient httpClient)
         {
             _httpClient = httpClient;
@@ -21,7 +23,7 @@ namespace Backend.Services
         {
             try
             {
-                string url = $"http://localhost:8989/route?point={fromLat},{fromLon}&point={toLat},{toLon}&vehicle=foot&locale=ru&instructions=true";
+                string url = $"{GraphHopperUrl}?point={fromLat},{fromLon}&point={toLat},{toLon}&vehicle=foot&locale=ru&instructions=true";
 
                 HttpResponseMessage response = await _httpClient.GetAsync(url);
                 response.EnsureSuccessStatusCode();
@@ -101,7 +103,7 @@ namespace Backend.Services
         {
             try
             {
-                string url = $"http://localhost:8989/route?point={fromLat},{fromLon}&point={toLat},{toLon}&vehicle=bike&locale=ru&instructions=true";
+                string url = $"{GraphHopperUrl}?point={fromLat},{fromLon}&point={toLat},{toLon}&vehicle=bike&locale=ru&instructions=true";
                 
                 HttpResponseMessage response = await _httpClient.GetAsync(url);
                 response.EnsureSuccessStatusCode();
