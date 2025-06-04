@@ -1,4 +1,6 @@
+using Backend.Models;
 using Backend.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,7 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Register GraphHopperService, TransitRouteService and FindTheNearestStationService
+// Register services
 builder.Services.AddHttpClient<GraphHopperService>();
 builder.Services.AddHttpClient<TransitRouteService>();
 builder.Services.AddHttpClient<FindTheNearestStationService>();
@@ -16,7 +18,21 @@ builder.Services.AddScoped<FindTheNearestStationService>();
 builder.Services.AddScoped<FindScooterService>();
 builder.Services.AddScoped<ScooterRouteService>();
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(connectionString, o => o.UseNetTopologySuite()));
+
+builder.Services.AddScoped<FetchAllPointers>();
+
 var app = builder.Build();
+
+// автоматично створить/оновить таблиці (у Java це працює автоматично)
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate(); 
+}
 
 if (app.Environment.IsDevelopment())
 {
@@ -25,7 +41,5 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.MapControllers();
-
 app.Run();

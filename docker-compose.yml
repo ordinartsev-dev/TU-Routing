@@ -1,17 +1,43 @@
-version: '3.8'
-
 services:
   tubify-route-manager:
-    container_name:  tubify-route-manager
-    image:  tubify-route-manager
-    expose:
-      - "5500"
+    container_name: tubify-route-manager
+    image: tubify-route-manager
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5500:8080"
     environment:
-      - ASPNETCORE_URLS=http://+:5500
-      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=mydatabase;Username=oskar;Password=pavliuk0352
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       - tubify-net
 
+  db:
+    image: postgis/postgis:15-3.4
+    platform: linux/amd64
+    container_name: my_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: oskar
+      POSTGRES_PASSWORD: pavliuk0352
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - tubify-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U oskar"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  postgres_data:
+
 networks:
   tubify-net:
-    external: true
