@@ -49,6 +49,34 @@ namespace Backend.Services
 
             return part2;
         }
+        
+
+        public async Task<List<List<double>>> BuildFullCarRouteAsync(List<(double Lat, double Lon)> coordinates)
+        {
+            var fullRoutePoints = new List<List<double>>();
+
+            if (coordinates == null || coordinates.Count < 2)
+                return fullRoutePoints;
+
+            for (int i = 0; i < coordinates.Count - 1; i++)
+            {
+                var from = coordinates[i];
+                var to = coordinates[i + 1];
+
+                var (carRoute, _) = await _graphHopperService.GetCarRouteAsync(from.Lat, from.Lon, to.Lat, to.Lon);
+
+                if (carRoute != null && carRoute.Path != null && carRoute.Path.Length > 0 && !string.IsNullOrEmpty(carRoute.Path[0].points))
+                {
+                    var decodedPoints = PolylineDecoder.Decode(carRoute.Path[0].points);
+                    foreach (var point in decodedPoints)
+                    {
+                        fullRoutePoints.Add(new List<double> { point.Latitude, point.Longitude });
+                    }
+                }
+            }
+            return fullRoutePoints;
+        }
+
 
         public async Task<string> generateHybridRoute(double fromLat, double fromLon, double toLat, double toLon)
         {
@@ -105,7 +133,9 @@ namespace Backend.Services
                         Console.WriteLine($"No transit route found between {station1.Name} and {station2.Name}.");
                         continue; // Skip this combination if no transit route
                     }
-                    
+
+                    var prTransportPolyline = await BuildFullCarRouteAsync(trRoute.routes.SelectMany(route => route.legs.SelectMany(leg => leg.stopovers.Select(stopover => (stopover.latitude, stopover.longitude)))).ToList());
+
                     var lastRoute = trRoute.routes[trRoute.routes.Length - 1];
                     var lastLeg = lastRoute.legs[lastRoute.legs.Length - 2];
                     var lastStopover = lastLeg.stopovers[lastLeg.stopovers.Length - 1];
@@ -171,6 +201,7 @@ namespace Backend.Services
                         {
                             Type = "transit",
                             Polyline = trRoute.routes.SelectMany(route => route.legs.SelectMany(leg => leg.stopovers.Select(stopover => new List<double> { stopover.latitude, stopover.longitude }))).ToList(),
+                            precisePolyline = prTransportPolyline,
                             DurationSeconds = trDuration,
                             DistanceMeters = trDistance,
                             TransportType = trRoute.routes.SelectMany(route => route.legs).FirstOrDefault(leg => leg.type != "walking")?.type ?? "Unknown",
