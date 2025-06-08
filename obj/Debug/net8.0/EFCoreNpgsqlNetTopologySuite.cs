@@ -13,5 +13,5 @@ using System.Reflection;
 [assembly: Microsoft.EntityFrameworkCore.Design.DesignTimeServicesReferenceAttribute(("Npgsql.EntityFrameworkCore.PostgreSQL.Design.Internal.NpgsqlNetTopologySuiteDesig" +
     "nTimeServices, Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite"), "Npgsql.EntityFrameworkCore.PostgreSQL")]
 
-// Von der MSBuild WriteCodeFragment-Klasse generiert.
+// Создано классом WriteCodeFragment MSBuild.
 
