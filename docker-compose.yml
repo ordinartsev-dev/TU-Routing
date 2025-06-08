@@ -10,7 +10,7 @@ services:
     environment:
       - ASPNETCORE_URLS=http://+:5500
       - ASPNETCORE_ENVIRONMENT=Production
-      - DB_CONNECTION_STRING=${DB_CONNECTION_STRING}
+      - ConnectionStrings__DefaultConnection=${ConnectionStrings__DefaultConnection}
     networks:
       - tubify-net
 
