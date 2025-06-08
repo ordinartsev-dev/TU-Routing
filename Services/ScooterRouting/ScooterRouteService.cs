@@ -56,7 +56,10 @@ namespace Backend.Services
             {
                 return "No route found to the endpoint.";
             }
-            return firstPart + secondPart;
+            return JsonSerializer.Serialize(new[] { 
+                JsonSerializer.Deserialize<object>(firstPart), 
+                JsonSerializer.Deserialize<object>(secondPart) 
+            });
 
             
         }
