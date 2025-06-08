@@ -20,7 +20,7 @@ namespace Backend.Services
         {
             try 
             {
-                string url = $"https://v6.bvg.transport.rest/locations/nearby?latitude={Lat}&longitude={Lon}&results=2";
+                string url = $"http://localhost:8000/api/nearest-stations?coords={Lat},{Lon}&results=2";
                 
                 HttpResponseMessage response = await _httpClient.GetAsync(url);
                 response.EnsureSuccessStatusCode();
@@ -34,15 +34,15 @@ namespace Backend.Services
                     IncludeFields = true
                 };
 
-                var stops = JsonSerializer.Deserialize<PublicTransportStop[]>(jsonResponse, options);
-                if (stops != null && stops.Length > 0)
+                var stopsDeserialized = JsonSerializer.Deserialize<PublicTransportStopsResponse>(jsonResponse, options);
+                if (stopsDeserialized != null && stopsDeserialized.stops.Length > 0)
                 {
-                    foreach (var stop in stops)
+                    foreach (var stop in stopsDeserialized.stops)
                     {
                         Console.WriteLine(stop.PrintName());
                     }
                     //Console.WriteLine(stops[0].PrintName());
-                    return stops; // Return the first stop
+                    return stopsDeserialized.stops; // Return the first stop
                 }
                 else
                 {
