@@ -13,20 +13,8 @@ namespace Backend.Models
         public int DistanceMeters { get; set; }
         public int DurationSeconds { get; set; }
 
-        // Пешком до остановки ОТ
-        public List<List<double>> WalkToTransportPolyline { get; set; }
-
-        // Сегмент общественного транспорта
-        public List<List<double>> TransportPolyline { get; set; }
-
-        // Пешком от остановки ОТ до цели
-        public List<List<double>> WalkFromTransportPolyline { get; set; }
-
-        // Доп. информация (по желанию)
-        public string TransportType { get; set; }  // например, "bus", "metro"
-        public string TransportLine { get; set; }  // например, "M7"
-        public string FromStop { get; set; }       // остановка посадки
-        public string ToStop { get; set; }         // остановка выхода
+        // Новый список сегментов маршрута
+        public List<HybridRouteSegment> Segments { get; set; }
 
         /*
         public TransitRouteResponse(string RouteId, List<double> Start, List<double> End, int DistanceMeters, int DurationSeconds,

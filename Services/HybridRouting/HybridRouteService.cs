@@ -42,7 +42,7 @@ namespace Backend.Services
         public async Task<TransitRoute> generateTransitRoute(PublicTransportStop stop1, PublicTransportStop stop2, string depatureTime)
         //public async Task<string> generateTransitRoute(PublicTransportStop stop1, PublicTransportStop stop2)
         {
-            
+
             var part2 = await _transitRouteService.CalculateTransitRouteAsync(stop1.Location.Latitude, stop1.Location.Longitude,
                                                                                  stop2.Location.Latitude, stop2.Location.Longitude, depatureTime);
 
@@ -113,27 +113,53 @@ namespace Backend.Services
                     var decodedPoints1 = PolylineDecoder.Decode(walkingRoute1.Path[0].points);
                     var decodedPoints2 = PolylineDecoder.Decode(walkingRoute2.Path[0].points);
 
+                    var walkToDistance = walkingRoute1.Path[0].distance;
+                    var walkFromDistance = walkingRoute2.Path[0].distance;
 
                     var trDuration = trRoute.routes.Sum(route => route.duration_minutes) * 60; // Convert minutes to seconds
+                    var trDistance = trRoute.routes.Sum(route => route.walking_distance);
 
                     Console.WriteLine("Transit duration" + trDuration + " seconds");
 
+                    var segments = new List<HybridRouteSegment>
+                    {
+                        new HybridRouteSegment
+                        {
+                            Type = "walk",
+                            Polyline = decodedPoints1.Select(point => new List<double> { point.Latitude, point.Longitude }).ToList(),
+                            DurationSeconds = walkingRoute1.Path[0].time / 1000,
+                            DistanceMeters = (int)walkToDistance
+                        },
+                        new HybridRouteSegment
+                        {
+                            Type = "transit",
+                            Polyline = trRoute.routes.SelectMany(route => route.legs.SelectMany(leg => leg.stopovers.Select(stopover => new List<double> { stopover.latitude, stopover.longitude }))).ToList(),
+                            DurationSeconds = trDuration,
+                            DistanceMeters = trDistance,
+                            TransportType = trRoute.routes.SelectMany(route => route.legs).FirstOrDefault(leg => leg.type != "walking")?.type ?? "Unknown",
+                            TransportLine = trRoute.routes.SelectMany(route => route.legs).Where(leg => leg.type != "walking" && !string.IsNullOrEmpty(leg.line)).Select(leg => leg.line).FirstOrDefault() ?? "Unknown",
+                            FromStop = nearestStations1[0].Name,
+                            ToStop = nearestStations2[0].Name
+                        },
+                        new HybridRouteSegment
+                        {
+                            Type = "walk",
+                            Polyline = decodedPoints2.Select(point => new List<double> { point.Latitude, point.Longitude }).ToList(),
+                            DurationSeconds = walkingRoute2.Path[0].time / 1000,
+                            DistanceMeters = (int)walkFromDistance
+                        }
+                    };
+
                     int overalltime = (walkingTime1 + walkingRoute2.Path[0].time) / 1000 + trDuration; // in seconds
 
-                    TransitRouteResponse temp = new TransitRouteResponse
+                    var temp = new TransitRouteResponse
                     {
                         Type = "Hybrid",
                         Start = new List<double> { decodedPoints1[0].Latitude, decodedPoints1[0].Longitude },
                         End = new List<double> { decodedPoints2[decodedPoints2.Count - 1].Latitude, decodedPoints2[decodedPoints2.Count - 1].Longitude },
-                        DistanceMeters = 0,
+                        Segments = segments,
                         DurationSeconds = overalltime,
-                        WalkToTransportPolyline = decodedPoints1.Select(point => new List<double> { point.Latitude, point.Longitude }).ToList(),
-                        TransportPolyline = trRoute.routes.SelectMany(route => route.legs.SelectMany(leg => leg.stopovers.Select(stopover => new List<double> { stopover.latitude, stopover.longitude }))).ToList(),
-                        WalkFromTransportPolyline = decodedPoints2.Select(point => new List<double> { point.Latitude, point.Longitude }).ToList(),
-                        TransportType = trRoute.routes.SelectMany(route => route.legs).FirstOrDefault(leg => leg.type != "walking")?.type ?? "Unknown",
-                        TransportLine = trRoute.routes.SelectMany(route => route.legs).Where(leg => leg.type != "walking" && !string.IsNullOrEmpty(leg.line)).Select(leg => leg.line).FirstOrDefault() ?? "Unknown",
-                        FromStop = nearestStations1[0].Name,
-                        ToStop = nearestStations2[0].Name
+                        DistanceMeters = segments.Sum(s => s.DistanceMeters)
                     };
 
                     transitRouteResponses.Add(temp);
@@ -150,9 +176,10 @@ namespace Backend.Services
             }
 
             var finalResponse = JsonSerializer.Serialize(sortedResponses[0]); // Serialize the first (shortest) response
-           
+
             return finalResponse;
         }
     }
     
+ 
 }
