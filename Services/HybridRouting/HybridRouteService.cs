@@ -34,6 +34,7 @@ namespace Backend.Services
             // Implement the logic to generate a route to the station
             // This could involve calling other services or APIs
             // For example, you might call the GraphHopperService and TransitRouteService here
+            Console.WriteLine($"Requesting route from {fromLat},{fromLon} to {toLat},{toLon}");
             var (obj, jsonResponse) = await _graphHopperService.GetRouteAsync(fromLat, fromLon, toLat, toLon);
 
             return (obj, jsonResponse);
@@ -42,9 +43,9 @@ namespace Backend.Services
         public async Task<TransitRoute> generateTransitRoute(PublicTransportStop stop1, PublicTransportStop stop2, string depatureTime)
         //public async Task<string> generateTransitRoute(PublicTransportStop stop1, PublicTransportStop stop2)
         {
-
-            var part2 = await _transitRouteService.CalculateTransitRouteAsync(stop1.Location.Latitude, stop1.Location.Longitude,
-                                                                                 stop2.Location.Latitude, stop2.Location.Longitude, depatureTime);
+            
+            var part2 = await _transitRouteService.CalculateTransitRouteAsync(stop1.Latitude, stop1.Longitude,
+                                                                                 stop2.Latitude, stop2.Longitude, depatureTime);
 
             return part2;
         }
@@ -62,7 +63,7 @@ namespace Backend.Services
             }
             foreach (var station in nearestStations1)
             {
-                Console.WriteLine(station.Name + "Lat" + station.Location.Latitude + "Long" + station.Location.Longitude);
+                Console.WriteLine(station.Name + "Lat" + station.Latitude + "Long" + station.Longitude);
             }
             //Console.WriteLine(nearestStations1.Name + "Lat" + nearestStations1.Location.Latitude + "Long" + nearestStations1.Location.Longitude);
             var nearestStations2 = await findTheNearestStation(toLat, toLon);
@@ -72,7 +73,7 @@ namespace Backend.Services
             }
             foreach (var station in nearestStations2)
             {
-                Console.WriteLine(station.Name + "Lat" + station.Location.Latitude + "Long" + station.Location.Longitude);
+                Console.WriteLine(station.Name + "Lat" + station.Latitude + "Long" + station.Longitude);
             }
             //Console.WriteLine(nearestStations2.Name + "Lat" + nearestStations2.Location.Latitude + "Long" + nearestStations2.Location.Longitude);
 
@@ -89,7 +90,7 @@ namespace Backend.Services
                 foreach (var station2 in nearestStations2)
                 {
                     // Add the combination to the array
-                    var (walkingRoute1, jsonResponse) = await generateWalkingRoute(fromLat, fromLon, station1.Location.Latitude, station1.Location.Longitude);
+                    var (walkingRoute1, jsonResponse) = await generateWalkingRoute(fromLat, fromLon, station1.Latitude, station1.Longitude);
                     if (walkingRoute1 == null || walkingRoute1.Path == null || walkingRoute1.Path.Length == 0 || string.IsNullOrEmpty(walkingRoute1.Path[0].points))
                     {
                         return "Failed to generate walking route to the first station.";
@@ -104,17 +105,53 @@ namespace Backend.Services
                         Console.WriteLine($"No transit route found between {station1.Name} and {station2.Name}.");
                         continue; // Skip this combination if no transit route
                     }
-                    var (walkingRoute2, jsonResponse2) = await generateWalkingRoute(station2.Location.Latitude, station2.Location.Longitude, toLat, toLon);
+                    
+                    var lastRoute = trRoute.routes[trRoute.routes.Length - 1];
+                    var lastLeg = lastRoute.legs[lastRoute.legs.Length - 2];
+                    var lastStopover = lastLeg.stopovers[lastLeg.stopovers.Length - 1];
+
+                    // Check if the last stopover is the same as the second station
+                    WalkingRoute walkingRoute2 = null;
+                    string jsonResponse2 = null;
+                    if (lastStopover.latitude == station2.Latitude && lastStopover.longitude == station2.Longitude)
+                    {
+                        Console.WriteLine($"The endstation from bvg response is the same as found!");
+                        var result = await generateWalkingRoute(station2.Latitude, station2.Longitude, toLat, toLon);
+                        walkingRoute2 = result.obj;
+                        jsonResponse2 = result.jsonResponse;
+                        if (walkingRoute2 == null || walkingRoute2.Path == null || walkingRoute2.Path.Length == 0 || string.IsNullOrEmpty(walkingRoute2.Path[0].points))
+                        {
+                            return "Failed to generate walking route from the second station to the endpoint.";
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"The endstation from bvg response is not the same as found! Using the last stopover from bvg response.");
+                        // Use the last stopover as the endpoint for the walking route
+                        var result = await generateWalkingRoute(lastStopover.latitude, lastStopover.longitude, toLat, toLon);
+                        walkingRoute2 = result.obj;
+                        jsonResponse2 = result.jsonResponse;
+                        if (walkingRoute2 == null || walkingRoute2.Path == null || walkingRoute2.Path.Length == 0 || string.IsNullOrEmpty(walkingRoute2.Path[0].points))
+                        {
+                            return "Failed to generate walking route from the second station to the endpoint.";
+                        }
+                    }
+
+                    /*
+                    var (walkingRoute2, jsonResponse2) = await generateWalkingRoute(station2.Latitude, station2.Longitude, toLat, toLon);
                     if (walkingRoute2 == null || walkingRoute2.Path == null || walkingRoute2.Path.Length == 0 || string.IsNullOrEmpty(walkingRoute2.Path[0].points))
                     {
                         return "Failed to generate walking route from the second station to the endpoint.";
                     }
+                    */
 
                     var decodedPoints1 = PolylineDecoder.Decode(walkingRoute1.Path[0].points);
                     var decodedPoints2 = PolylineDecoder.Decode(walkingRoute2.Path[0].points);
 
+
                     var walkToDistance = walkingRoute1.Path[0].distance;
                     var walkFromDistance = walkingRoute2.Path[0].distance;
+
 
                     var trDuration = trRoute.routes.Sum(route => route.duration_minutes) * 60; // Convert minutes to seconds
                     var trDistance = trRoute.routes.Sum(route => route.walking_distance);
@@ -181,5 +218,4 @@ namespace Backend.Services
         }
     }
     
- 
 }

@@ -6,16 +6,30 @@ namespace Backend.Models
     {
         [JsonPropertyName("type")]
         public string Type { get; set; }
+
         [JsonPropertyName("id")]
-        public String Id {get; set;}
+        public string Id { get; set; }
+
         [JsonPropertyName("name")]
-        public String Name {get; set;}
-        [JsonPropertyName("location")]
-        public Location Location {get; set;}
+        public string Name { get; set; }
+
+        [JsonPropertyName("latitude")]
+        public double Latitude { get; set; }
+
+        [JsonPropertyName("longitude")]
+        public double Longitude { get; set; }
+
         [JsonPropertyName("products")]
         public Dictionary<string, bool> Products { get; set; }
+
         [JsonPropertyName("distance")]
         public int Distance { get; set; }
+
+        [JsonPropertyName("station")]
+        public object Station { get; set; } // Adjust type if you have a Station class
+
+        [JsonPropertyName("lines")]
+        public object[] Lines { get; set; } // Adjust type if you have a Line class
 
         public string PrintName()
         {

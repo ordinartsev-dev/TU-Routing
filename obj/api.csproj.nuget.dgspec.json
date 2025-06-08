@@ -1,31 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "E:\\IT Projects\\UniMap\\Backend\\TU-Routing\\api.csproj": {}
+    "E:\\TUBify-RouteManager\\TU-Routing\\api.csproj": {}
   },
   "projects": {
-    "E:\\IT Projects\\UniMap\\Backend\\TU-Routing\\api.csproj": {
+    "E:\\TUBify-RouteManager\\TU-Routing\\api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\IT Projects\\UniMap\\Backend\\TU-Routing\\api.csproj",
+        "projectUniqueName": "E:\\TUBify-RouteManager\\TU-Routing\\api.csproj",
         "projectName": "api",
-        "projectPath": "E:\\IT Projects\\UniMap\\Backend\\TU-Routing\\api.csproj",
-        "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "E:\\IT Projects\\UniMap\\Backend\\TU-Routing\\obj\\",
+        "projectPath": "E:\\TUBify-RouteManager\\TU-Routing\\api.csproj",
+        "packagesPath": "C:\\Users\\Egor Ordinartsev\\.nuget\\packages\\",
+        "outputPath": "E:\\TUBify-RouteManager\\TU-Routing\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\Egor Ordinartsev\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -43,8 +37,7 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "9.0.200"
+        }
       },
       "frameworks": {
         "net8.0": {
@@ -100,7 +93,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.409/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
