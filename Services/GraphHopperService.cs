@@ -59,7 +59,7 @@ namespace Backend.Services
                         Start = new List<double> { decodedPoints[0].Latitude, decodedPoints[0].Longitude },
                         End = new List<double> { decodedPoints[decodedPoints.Count - 1].Latitude, decodedPoints[decodedPoints.Count - 1].Longitude },
                         DistanceMeters = path.Path[0].distance,
-                        DurationSeconds = (int)path.Path[0].time,
+                        DurationSeconds = (int)path.Path[0].time/1000,
                         Polyline = decodedPoints.Select(point => new List<double> { point.Latitude, point.Longitude }).ToList()
                     };
 
@@ -139,7 +139,7 @@ namespace Backend.Services
                         Start = new List<double> { decodedPoints[0].Latitude, decodedPoints[0].Longitude },
                         End = new List<double> { decodedPoints[decodedPoints.Count - 1].Latitude, decodedPoints[decodedPoints.Count - 1].Longitude },
                         DistanceMeters = path.Path[0].distance,
-                        DurationSeconds = (int)path.Path[0].time,
+                        DurationSeconds = (int)path.Path[0].time/1000,
                         Polyline = decodedPoints.Select(point => new List<double> { point.Latitude, point.Longitude }).ToList()
                     };
 
