@@ -17,6 +17,7 @@ builder.Services.AddScoped<HybridRouteService>();
 builder.Services.AddScoped<FindTheNearestStationService>();
 builder.Services.AddScoped<FindScooterService>();
 builder.Services.AddScoped<ScooterRouteService>();
+builder.Services.AddScoped<WalkingRouteService>();
 
 // Use connection string from appsettings.json
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

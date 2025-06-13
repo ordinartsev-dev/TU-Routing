@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Backend.Services;
+using Backend.Contracts;
 
 namespace Backend.Controllers
 {
@@ -15,14 +16,15 @@ namespace Backend.Controllers
         private readonly HybridRouteService _hybridRouteService;
         private readonly FindScooterService _findScooterService;
         private readonly ScooterRouteService _scooterRouteService;
+
+        private readonly WalkingRouteService _walkingRouteService;
+
         private readonly FetchAllPointers _fetchAllPointers;
 
 
         public RouteController(GraphHopperService graphHopperService,
-            TransitRouteService transitRouteService, FindTheNearestStationService findTheNearestStationService,
-            HybridRouteService hybridRouteService, FindScooterService findScooterService,
-            ScooterRouteService scooterRouteService,
-            FetchAllPointers fetchAllPointers)
+         TransitRouteService transitRouteService, FindTheNearestStationService findTheNearestStationService,
+         HybridRouteService hybridRouteService, FindScooterService findScooterService, ScooterRouteService scooterRouteService, WalkingRouteService walkingRouteService, FetchAllPointers fetchAllPointers)
         {
             _graphHopperService = graphHopperService;
             _transitRouteService = transitRouteService;
@@ -30,17 +32,20 @@ namespace Backend.Controllers
             _hybridRouteService = hybridRouteService;
             _findScooterService = findScooterService;
             _scooterRouteService = scooterRouteService;
+            _walkingRouteService = walkingRouteService;
             _fetchAllPointers = fetchAllPointers;
         }
 
-        [HttpGet("walking")]
+        [HttpPost("walking")]
         public async Task<IActionResult> GetRoute(
-            [FromQuery] double fromLat,
-            [FromQuery] double fromLon,
-            [FromQuery] double toLat,
-            [FromQuery] double toLon)
+            [FromBody] ListOfPoints request)
         {
-            var (obj, response) = await _graphHopperService.GetRouteAsync(fromLat, fromLon, toLat, toLon);
+            if (request == null || request.Points == null || request.Points.Count < 2)
+            {
+                return BadRequest("Invalid points provided. At least two points are required.");
+            }
+            var points = request.Points.Select(p => new List<double> { p.Lat, p.Lon }).ToList();
+            var response = await _walkingRouteService.WalkingRouteAsync(points);
             return Ok(response);
         }
 
@@ -65,14 +70,16 @@ namespace Backend.Controllers
             return Ok(result);
         }
 
-        [HttpGet("scooter-route")]
+        [HttpPost("scooter-route")]
         public async Task<IActionResult> GetScooterRoute(
-            [FromQuery] double fromLat,
-            [FromQuery] double fromLon,
-            [FromQuery] double toLat,
-            [FromQuery] double toLon)
+            [FromBody] ListOfPoints request)
         {
-            var result = await _scooterRouteService.ScooterRouteAsync(fromLat, fromLon, toLat, toLon);
+            if (request == null || request.Points == null || request.Points.Count < 2)
+            {
+                return BadRequest("Invalid points provided. At least two points are required.");
+            }
+            var points = request.Points.Select(p => new List<double> { p.Lat, p.Lon }).ToList();
+            var result = await _scooterRouteService.ScooterRouteAsync(points);
             return Ok(result);
         }
 
@@ -93,7 +100,7 @@ namespace Backend.Controllers
             [FromQuery] double toLat,
             [FromQuery] double toLon)
         {
-            
+            // Вызываем все 3 части маршрута
             var result = await _hybridRouteService.generateHybridRoute(fromLat, fromLon, toLat, toLon);
 
             return Ok(result);
