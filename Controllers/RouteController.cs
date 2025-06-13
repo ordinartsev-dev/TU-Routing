@@ -18,13 +18,16 @@ namespace Backend.Controllers
         private readonly ScooterRouteService _scooterRouteService;
 
         private readonly WalkingRouteService _walkingRouteService;
+        private readonly HybridRouteServiceSeveralPoints _hybridRouteServiceSeveralPoints;
 
         private readonly FetchAllPointers _fetchAllPointers;
 
 
         public RouteController(GraphHopperService graphHopperService,
          TransitRouteService transitRouteService, FindTheNearestStationService findTheNearestStationService,
-         HybridRouteService hybridRouteService, FindScooterService findScooterService, ScooterRouteService scooterRouteService, WalkingRouteService walkingRouteService, FetchAllPointers fetchAllPointers)
+         HybridRouteService hybridRouteService, FindScooterService findScooterService,
+          ScooterRouteService scooterRouteService, WalkingRouteService walkingRouteService, FetchAllPointers fetchAllPointers,
+          HybridRouteServiceSeveralPoints hybridRouteServiceSeveralPoints)
         {
             _graphHopperService = graphHopperService;
             _transitRouteService = transitRouteService;
@@ -33,6 +36,7 @@ namespace Backend.Controllers
             _findScooterService = findScooterService;
             _scooterRouteService = scooterRouteService;
             _walkingRouteService = walkingRouteService;
+            _hybridRouteServiceSeveralPoints = hybridRouteServiceSeveralPoints;
             _fetchAllPointers = fetchAllPointers;
         }
 
@@ -105,6 +109,20 @@ namespace Backend.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("hybrid-several-points")]
+        public async Task<IActionResult> GetHybridRouteSeveralPoints(
+            [FromBody] ListOfPoints request)
+        {
+            if (request == null || request.Points == null || request.Points.Count < 2)
+            {
+                return BadRequest("Invalid points provided. At least two points are required.");
+            }
+            var points = request.Points.Select(p => new List<double> { p.Lat, p.Lon }).ToList();
+            var result = await _hybridRouteServiceSeveralPoints.HybridRouteSeveralPointsAsync(points);
+            return Ok(result);
+        }
+        
 
         [HttpGet("all-pointers")]
         public async Task<IActionResult> GetAllPointers()
