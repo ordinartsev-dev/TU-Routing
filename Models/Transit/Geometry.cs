@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Backend.Models
 {
-    public class Geometry
+    public class GeometryCustom
     {
         [JsonPropertyName("Type")]
         public string Type { get; set; } // "Point" or others

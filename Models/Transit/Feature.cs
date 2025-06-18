@@ -9,7 +9,7 @@ namespace Backend.Models
         public string Type { get; set; } // "Feature"
         [JsonPropertyName("Properties")]
         public FeatureProperties Properties { get; set; }
-        [JsonPropertyName("Geometry")]
-        public Geometry Geometry { get; set; }
+        [JsonPropertyName("geometry")]
+        public GeometryCustom geometry { get; set; }
     }
 }

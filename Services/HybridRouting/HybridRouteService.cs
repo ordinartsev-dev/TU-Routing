@@ -201,8 +201,8 @@ namespace Backend.Services
                                 {
                                     allCoordinatesOfGeometry.Add(new List<double>
                                     {
-                                        feature.Geometry.Coordinates[1], // latitude
-                                        feature.Geometry.Coordinates[0]  // longitude
+                                        feature.geometry.Coordinates[1], // latitude
+                                        feature.geometry.Coordinates[0]  // longitude
                                     });
                                 }
                             }
