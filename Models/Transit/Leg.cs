@@ -5,7 +5,7 @@ namespace Backend.Models
     public class Leg
     {
         [JsonPropertyName("start")]
-        public TransitLocation  start{ get; set; }
+        public TransitLocation start { get; set; }
         [JsonPropertyName("end")]
         public TransitLocation end { get; set; }
         [JsonPropertyName("type")]
@@ -28,5 +28,7 @@ namespace Backend.Models
         public string[] warnings { get; set; }
         [JsonPropertyName("stopovers")]
         public Stopover[] stopovers { get; set; }
+        [JsonPropertyName("polyline")]
+        public Polyline polyline { get; set; } // New field
     }
 }

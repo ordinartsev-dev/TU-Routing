@@ -188,6 +188,27 @@ namespace Backend.Services
 
                     Console.WriteLine("Transit duration" + trDuration + " seconds");
 
+
+                    var allCoordinatesOfGeometry = new List<List<double>>();
+
+                    foreach (var route in trRoute.routes)
+                    {
+                        foreach (var leg in route.legs)
+                        {
+                            if (leg.polyline != null && leg.polyline.features != null)
+                            {
+                                foreach (var feature in leg.polyline.features)
+                                {
+                                    allCoordinatesOfGeometry.Add(new List<double>
+                                    {
+                                        feature.Geometry.Coordinates[1], // latitude
+                                        feature.Geometry.Coordinates[0]  // longitude
+                                    });
+                                }
+                            }
+                        }
+                    }
+
                     var segments = new List<HybridRouteSegment>
                     {
                         new HybridRouteSegment
@@ -201,7 +222,7 @@ namespace Backend.Services
                         {
                             Type = "transit",
                             Polyline = trRoute.routes.SelectMany(route => route.legs.SelectMany(leg => leg.stopovers.Select(stopover => new List<double> { stopover.latitude, stopover.longitude }))).ToList(),
-                            precisePolyline = prTransportPolyline,
+                            precisePolyline = allCoordinatesOfGeometry,
                             DurationSeconds = trDuration,
                             DistanceMeters = trDistance,
                             TransportType = trRoute.routes.SelectMany(route => route.legs).FirstOrDefault(leg => leg.type != "walking")?.type ?? "Unknown",
