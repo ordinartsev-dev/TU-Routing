@@ -49,15 +49,14 @@ namespace Backend.Services
             {
                 return "Invalid points provided. At least two points are required.";
             }
-
-            string response = string.Empty;
+            var route = new List<RouteResponce>();
 
             var fromLat = points[0][0];
             var fromLon = points[0][1];
             var scooters = await _findScooterService.FindScooterAsync(fromLat, fromLon);
             var firstPart = await findRouteToScooter(fromLat, fromLon, scooters.bike[0].lat, scooters.bike[0].lon);
 
-            response += firstPart;
+            route.Add(JsonSerializer.Deserialize<RouteResponce>(firstPart)!);
 
             if (firstPart == null)
             {
@@ -77,12 +76,11 @@ namespace Backend.Services
                 {
                     return "No route found to the endpoint.";
                 }
-
-                response += temp;
+                route.Add(JsonSerializer.Deserialize<RouteResponce>(temp)!);
             }
 
             //var secondPart = await findRouteToEndPoint(scooters.bike[0].lat, scooters.bike[0].lon, toLat, toLon);
-            return response;
+            return JsonSerializer.Serialize(route);
 
             
         }

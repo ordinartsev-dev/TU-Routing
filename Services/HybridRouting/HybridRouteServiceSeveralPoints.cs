@@ -19,7 +19,7 @@ namespace Backend.Services
                 return "Invalid points provided. At least two points are required.";
             }
 
-            string response = string.Empty;
+            var route = new List<TransitRouteResponse>();
 
             for (int i = 0; i < points.Count - 1; i++)
             {
@@ -33,10 +33,10 @@ namespace Backend.Services
                 {
                     return "No route found.";
                 }
-                response += temp;
+                route.Add(JsonSerializer.Deserialize<TransitRouteResponse>(temp)!);
             }
 
-            return response;
+            return JsonSerializer.Serialize(route);
         }
     }
 }
