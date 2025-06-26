@@ -134,8 +134,6 @@ namespace Backend.Services
                         continue; // Skip this combination if no transit route
                     }
 
-                    var prTransportPolyline = await BuildFullCarRouteAsync(trRoute.routes.SelectMany(route => route.legs.SelectMany(leg => leg.stopovers.Select(stopover => (stopover.latitude, stopover.longitude)))).ToList());
-
                     var lastRoute = trRoute.routes[trRoute.routes.Length - 1];
                     var lastLeg = lastRoute.legs[lastRoute.legs.Length - 2];
                     var lastStopover = lastLeg.stopovers[lastLeg.stopovers.Length - 1];
