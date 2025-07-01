@@ -48,9 +48,45 @@ namespace Backend.Controllers
             {
                 return BadRequest("Invalid points provided. At least two points are required.");
             }
-            var points = request.Points.Select(p => new List<double> { p.Lat, p.Lon }).ToList();
-            var response = await _walkingRouteService.WalkingRouteAsync(points);
-            return Ok(response);
+
+            // Проверка корректности координат
+            for (int i = 0; i < request.Points.Count; i++)
+            {
+                var point = request.Points[i];
+                
+                // Проверка широты (должна быть от -90 до 90)
+                if (point.Lat < -90 || point.Lat > 90)
+                {
+                    return BadRequest($"Invalid latitude value at point {i + 1}. Latitude must be between -90 and 90 degrees.");
+                }
+                
+                // Проверка долготы (должна быть от -180 до 180)
+                if (point.Lon < -180 || point.Lon > 180)
+                {
+                    return BadRequest($"Invalid longitude value at point {i + 1}. Longitude must be between -180 and 180 degrees.");
+                }
+            }
+
+            try
+            {
+                var points = request.Points.Select(p => new List<double> { p.Lat, p.Lon }).ToList();
+                var response = await _walkingRouteService.WalkingRouteAsync(points);
+                
+                if (response == null)
+                {
+                    return NotFound("No walking route found for the provided points.");
+                }
+                
+                return Ok(response);
+            }
+            catch (HttpRequestException ex)
+            {
+                return BadRequest($"Error while calculating route: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         [HttpGet("transit")]
@@ -82,9 +118,44 @@ namespace Backend.Controllers
             {
                 return BadRequest("Invalid points provided. At least two points are required.");
             }
-            var points = request.Points.Select(p => new List<double> { p.Lat, p.Lon }).ToList();
-            var result = await _scooterRouteService.ScooterRouteAsync(points);
-            return Ok(result);
+
+            // Проверка корректности координат
+            for (int i = 0; i < request.Points.Count; i++)
+            {
+                var point = request.Points[i];
+
+                // Проверка широты (должна быть от -90 до 90)
+                if (point.Lat < -90 || point.Lat > 90)
+                {
+                    return BadRequest($"Invalid latitude value at point {i + 1}. Latitude must be between -90 and 90 degrees.");
+                }
+
+                // Проверка долготы (должна быть от -180 до 180)
+                if (point.Lon < -180 || point.Lon > 180)
+                {
+                    return BadRequest($"Invalid longitude value at point {i + 1}. Longitude must be between -180 and 180 degrees.");
+                }
+            }
+
+            try
+            {
+                var points = request.Points.Select(p => new List<double> { p.Lat, p.Lon }).ToList();
+                var result = await _scooterRouteService.ScooterRouteAsync(points);
+
+                if (result == null)
+                {
+                    return NotFound("No scooter route found for the provided points.");
+                }
+                return Ok(result);
+            }
+            catch (HttpRequestException ex)
+            {
+                return BadRequest($"Error while calculating route: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         [HttpGet("nearest-station")]
@@ -118,9 +189,46 @@ namespace Backend.Controllers
             {
                 return BadRequest("Invalid points provided. At least two points are required.");
             }
-            var points = request.Points.Select(p => new List<double> { p.Lat, p.Lon }).ToList();
-            var result = await _hybridRouteServiceSeveralPoints.HybridRouteSeveralPointsAsync(points);
-            return Ok(result);
+
+            // Проверка корректности координат
+            for (int i = 0; i < request.Points.Count; i++)
+            {
+                var point = request.Points[i];
+
+                // Проверка широты (должна быть от -90 до 90)
+                if (point.Lat < -90 || point.Lat > 90)
+                {
+                    return BadRequest($"Invalid latitude value at point {i + 1}. Latitude must be between -90 and 90 degrees.");
+                }
+
+                // Проверка долготы (должна быть от -180 до 180)
+                if (point.Lon < -180 || point.Lon > 180)
+                {
+                    return BadRequest($"Invalid longitude value at point {i + 1}. Longitude must be between -180 and 180 degrees.");
+                }
+            }
+
+            try
+            {
+                var points = request.Points.Select(p => new List<double> { p.Lat, p.Lon }).ToList();
+                var result = await _hybridRouteServiceSeveralPoints.HybridRouteSeveralPointsAsync(points);
+
+                if (result == null)
+                {
+                    return NotFound("No hybrid route found for the provided points.");
+                }
+
+                return Ok(result);
+            }
+            catch (HttpRequestException ex)
+            {
+                return BadRequest($"Error while calculating route: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+            
         }
         
 
