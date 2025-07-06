@@ -21,7 +21,7 @@ namespace Backend.Services
         {
             try
             {
-                string url = $"https://dev.cherep.co/tubify/api/routes?from={fromLat},{fromLon}&to={toLat},{toLon}&departure={deptime}&stopovers=true&polylines=true";
+                string url = $"http://tubify-external-api:8000/api/routes?from={fromLat},{fromLon}&to={toLat},{toLon}&departure={deptime}&stopovers=true&polylines=true";
             
                 HttpResponseMessage response = await _httpClient.GetAsync(url);
                 response.EnsureSuccessStatusCode();
