@@ -17,7 +17,7 @@ namespace Backend.Models
         [JsonPropertyName("departure_time")]
         public DateTimeOffset departure_time { get; set; }
         [JsonPropertyName("arrival_time")]
-        public string arrival_time { get; set; }
+        public DateTimeOffset arrival_time { get; set; }
         [JsonPropertyName("delay_minutes")]
         public int? delay_minutes { get; set; }
         [JsonPropertyName("distance")]

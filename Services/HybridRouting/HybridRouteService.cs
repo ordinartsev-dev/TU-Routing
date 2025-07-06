@@ -13,7 +13,8 @@ namespace Backend.Services
         private readonly TransitRouteService _transitRouteService;
         private readonly FindTheNearestStationService _findTheNearestStationService;
 
-        public HybridRouteService(GraphHopperService graphHopperService, TransitRouteService transitRouteService, FindTheNearestStationService findTheNearestStationService)
+        public HybridRouteService(GraphHopperService graphHopperService, TransitRouteService transitRouteService,
+            FindTheNearestStationService findTheNearestStationService)
         {
             _graphHopperService = graphHopperService;
             _transitRouteService = transitRouteService;
@@ -28,8 +29,10 @@ namespace Backend.Services
             var nearestStation = await _findTheNearestStationService.FindTheNearestStationServiceAsync(Lat, Lon);
             return nearestStation;
         }
+
         //public async Task<WalkingRoute> generateRouteToStation(double fromLat, double fromLon, double toLat, double toLon)
-        public async Task<(WalkingRoute obj, string jsonResponse)> generateWalkingRoute(double fromLat, double fromLon, double toLat, double toLon)
+        public async Task<(WalkingRoute obj, string jsonResponse)> generateWalkingRoute(double fromLat, double fromLon,
+            double toLat, double toLon)
         {
             // Implement the logic to generate a route to the station
             // This could involve calling other services or APIs
@@ -40,221 +43,161 @@ namespace Backend.Services
             return (obj, jsonResponse);
         }
 
-        public async Task<TransitRoute> generateTransitRoute(PublicTransportStop stop1, PublicTransportStop stop2, string depatureTime)
-        //public async Task<string> generateTransitRoute(PublicTransportStop stop1, PublicTransportStop stop2)
+        public async Task<TransitRoute> generateTransitRoute(PublicTransportStop stop1, PublicTransportStop stop2,
+                string depatureTime)
+            //public async Task<string> generateTransitRoute(PublicTransportStop stop1, PublicTransportStop stop2)
         {
-            
+
             var part2 = await _transitRouteService.CalculateTransitRouteAsync(stop1.Latitude, stop1.Longitude,
-                                                                                 stop2.Latitude, stop2.Longitude, depatureTime);
+                stop2.Latitude, stop2.Longitude, depatureTime);
 
             return part2;
-        }
-        
-
-        public async Task<List<List<double>>> BuildFullCarRouteAsync(List<(double Lat, double Lon)> coordinates)
-        {
-            var fullRoutePoints = new List<List<double>>();
-
-            if (coordinates == null || coordinates.Count < 2)
-                return fullRoutePoints;
-
-            for (int i = 0; i < coordinates.Count - 1; i++)
-            {
-                var from = coordinates[i];
-                var to = coordinates[i + 1];
-
-                var (carRoute, _) = await _graphHopperService.GetCarRouteAsync(from.Lat, from.Lon, to.Lat, to.Lon);
-
-                if (carRoute != null && carRoute.Path != null && carRoute.Path.Length > 0 && !string.IsNullOrEmpty(carRoute.Path[0].points))
-                {
-                    var decodedPoints = PolylineDecoder.Decode(carRoute.Path[0].points);
-                    foreach (var point in decodedPoints)
-                    {
-                        fullRoutePoints.Add(new List<double> { point.Latitude, point.Longitude });
-                    }
-                }
-            }
-            return fullRoutePoints;
         }
 
 
         public async Task<string> generateHybridRoute(double fromLat, double fromLon, double toLat, double toLon)
         {
-            // Implement the logic to generate a hybrid route
-            // This could involve calling other services or APIs
-            // For example, you might call the GraphHopperService and TransitRouteService here
-            // Find the nearest station
             var nearestStations1 = await findTheNearestStation(fromLat, fromLon);
             if (nearestStations1 == null || nearestStations1.Length == 0)
             {
                 return "No nearest station found from the starting point.";
             }
-            foreach (var station in nearestStations1)
-            {
-                Console.WriteLine(station.Name + "Lat" + station.Latitude + "Long" + station.Longitude);
-            }
-            //Console.WriteLine(nearestStations1.Name + "Lat" + nearestStations1.Location.Latitude + "Long" + nearestStations1.Location.Longitude);
+
             var nearestStations2 = await findTheNearestStation(toLat, toLon);
             if (nearestStations2 == null || nearestStations2.Length == 0)
             {
                 return "No nearest station found from the endpoint.";
             }
-            foreach (var station in nearestStations2)
-            {
-                Console.WriteLine(station.Name + "Lat" + station.Latitude + "Long" + station.Longitude);
-            }
-            //Console.WriteLine(nearestStations2.Name + "Lat" + nearestStations2.Location.Latitude + "Long" + nearestStations2.Location.Longitude);
-
 
             DateTime currentTime = DateTime.Now;
-
-            List<TransitRouteResponse> transitRouteResponses = new List<TransitRouteResponse>();
-
-
-            //TransitRouteResponse[] transitRouteResponses = new TransitRouteResponse[nearestStations1.Length * nearestStations2.Length];
+            List<TransitRouteResponse> transitRouteResponses = new();
 
             foreach (var station1 in nearestStations1)
             {
                 foreach (var station2 in nearestStations2)
                 {
-                    // Add the combination to the array
-                    var (walkingRoute1, jsonResponse) = await generateWalkingRoute(fromLat, fromLon, station1.Latitude, station1.Longitude);
-                    if (walkingRoute1 == null || walkingRoute1.Path == null || walkingRoute1.Path.Length == 0 || string.IsNullOrEmpty(walkingRoute1.Path[0].points))
-                    {
-                        return "Failed to generate walking route to the first station.";
-                    }
+                    var (walkingRoute1, _) =
+                        await generateWalkingRoute(fromLat, fromLon, station1.Latitude, station1.Longitude);
+                    if (walkingRoute1?.Path == null || walkingRoute1.Path.Length == 0 ||
+                        string.IsNullOrEmpty(walkingRoute1.Path[0].points))
+                        continue;
 
                     int walkingTime1 = walkingRoute1.Path[0].time;
                     DateTime departureTime = currentTime.AddMilliseconds(walkingTime1);
 
-                    var trRoute = await generateTransitRoute(station1, station2, depatureTime: departureTime.ToString("yyyy-MM-ddTHH:mm:ssZ"));
-                    if (trRoute == null || trRoute.routes == null || trRoute.routes.Length == 0)
-                    {
-                        Console.WriteLine($"No transit route found between {station1.Name} and {station2.Name}.");
-                        continue; // Skip this combination if no transit route
-                    }
+                    var trRoute = await generateTransitRoute(station1, station2,
+                        depatureTime: departureTime.ToString("yyyy-MM-ddTHH:mm:ssZ"));
+                    if (trRoute?.routes == null || trRoute.routes.Length == 0)
+                        continue;
 
-                    var lastRoute = trRoute.routes[trRoute.routes.Length - 1];
+                    var lastRoute = trRoute.routes[0];
                     var lastLeg = lastRoute.legs[lastRoute.legs.Length - 2];
                     var lastStopover = lastLeg.stopovers[lastLeg.stopovers.Length - 1];
 
-                    // Check if the last stopover is the same as the second station
-                    WalkingRoute walkingRoute2 = null;
-                    string jsonResponse2 = null;
+                    WalkingRoute walkingRoute2;
                     if (lastStopover.latitude == station2.Latitude && lastStopover.longitude == station2.Longitude)
                     {
-                        Console.WriteLine($"The endstation from bvg response is the same as found!");
                         var result = await generateWalkingRoute(station2.Latitude, station2.Longitude, toLat, toLon);
                         walkingRoute2 = result.obj;
-                        jsonResponse2 = result.jsonResponse;
-                        if (walkingRoute2 == null || walkingRoute2.Path == null || walkingRoute2.Path.Length == 0 || string.IsNullOrEmpty(walkingRoute2.Path[0].points))
-                        {
-                            return "Failed to generate walking route from the second station to the endpoint.";
-                        }
+                        if (walkingRoute2?.Path == null || walkingRoute2.Path.Length == 0 ||
+                            string.IsNullOrEmpty(walkingRoute2.Path[0].points))
+                            continue;
                     }
                     else
                     {
-                        Console.WriteLine($"The endstation from bvg response is not the same as found! Using the last stopover from bvg response.");
-                        // Use the last stopover as the endpoint for the walking route
-                        var result = await generateWalkingRoute(lastStopover.latitude, lastStopover.longitude, toLat, toLon);
+                        var result = await generateWalkingRoute(lastStopover.latitude, lastStopover.longitude, toLat,
+                            toLon);
                         walkingRoute2 = result.obj;
-                        jsonResponse2 = result.jsonResponse;
-                        if (walkingRoute2 == null || walkingRoute2.Path == null || walkingRoute2.Path.Length == 0 || string.IsNullOrEmpty(walkingRoute2.Path[0].points))
-                        {
-                            return "Failed to generate walking route from the second station to the endpoint.";
-                        }
+                        if (walkingRoute2?.Path == null || walkingRoute2.Path.Length == 0 ||
+                            string.IsNullOrEmpty(walkingRoute2.Path[0].points))
+                            continue;
                     }
-
-                    /*
-                    var (walkingRoute2, jsonResponse2) = await generateWalkingRoute(station2.Latitude, station2.Longitude, toLat, toLon);
-                    if (walkingRoute2 == null || walkingRoute2.Path == null || walkingRoute2.Path.Length == 0 || string.IsNullOrEmpty(walkingRoute2.Path[0].points))
-                    {
-                        return "Failed to generate walking route from the second station to the endpoint.";
-                    }
-                    */
 
                     var decodedPoints1 = PolylineDecoder.Decode(walkingRoute1.Path[0].points);
                     var decodedPoints2 = PolylineDecoder.Decode(walkingRoute2.Path[0].points);
 
-
                     var walkToDistance = walkingRoute1.Path[0].distance;
                     var walkFromDistance = walkingRoute2.Path[0].distance;
 
+                    var segments = new List<HybridRouteSegment>();
 
-                    var trDuration = trRoute.routes.Sum(route => route.duration_minutes) * 60; // Convert minutes to seconds
-                    var trDistance = trRoute.routes.Sum(route => route.walking_distance);
-
-                    Console.WriteLine("Transit duration" + trDuration + " seconds");
-
-
-                    var allCoordinatesOfGeometry = new List<List<double>>();
-
-                    foreach (var route in trRoute.routes)
+                    // Add walking segment TO station
+                    segments.Add(new HybridRouteSegment
                     {
-                        foreach (var leg in route.legs)
+                        Type = "walk",
+                        Polyline = decodedPoints1.Select(p => new List<double> { p.Latitude, p.Longitude }).ToList(),
+                        DurationSeconds = walkingRoute1.Path[0].time / 1000,
+                        DistanceMeters = (int)walkToDistance
+                    });
+
+                    // Add each transit leg as a separate segment
+                    foreach (var leg in lastRoute.legs)
+                    {
+                        if (leg.type == "walking") continue;
+
+                        var stopoverPolyline = leg.stopovers?
+                            .Select(stop => new List<double> { stop.latitude, stop.longitude })
+                            .ToList() ?? new List<List<double>>();
+
+                        var precisePolyline = new List<List<double>>();
+                        if (leg.polyline?.features != null)
                         {
-                            if (leg.polyline != null && leg.polyline.features != null)
+                            foreach (var feature in leg.polyline.features)
                             {
-                                foreach (var feature in leg.polyline.features)
+                                if (feature.geometry?.Coordinates?.Count >= 2)
                                 {
-                                    allCoordinatesOfGeometry.Add(new List<double>
+                                    precisePolyline.Add(new List<double>
                                     {
-                                        feature.geometry.Coordinates[1], // latitude
-                                        feature.geometry.Coordinates[0]  // longitude
+                                        feature.geometry.Coordinates[1],
+                                        feature.geometry.Coordinates[0]
                                     });
                                 }
                             }
                         }
-                    }
 
-                    var segments = new List<HybridRouteSegment>
-                    {
-                        new HybridRouteSegment
-                        {
-                            Type = "walk",
-                            Polyline = decodedPoints1.Select(point => new List<double> { point.Latitude, point.Longitude }).ToList(),
-                            DurationSeconds = walkingRoute1.Path[0].time / 1000,
-                            DistanceMeters = (int)walkToDistance
-                        },
-                        new HybridRouteSegment
+                        if (precisePolyline.Count == 0 && stopoverPolyline.Count == 0)
+                            continue;
+
+                        segments.Add(new HybridRouteSegment
                         {
                             Type = "transit",
-                            Polyline = trRoute.routes.SelectMany(route => route.legs.SelectMany(leg => leg.stopovers.Select(stopover => new List<double> { stopover.latitude, stopover.longitude }))).ToList(),
-                            precisePolyline = allCoordinatesOfGeometry,
-                            DurationSeconds = trDuration,
-                            DistanceMeters = trDistance,
-                            TransportType = trRoute.routes.SelectMany(route => route.legs).FirstOrDefault(leg => leg.type != "walking")?.type ?? "Unknown",
-                            TransportLine = trRoute.routes.SelectMany(route => route.legs).Where(leg => leg.type != "walking" && !string.IsNullOrEmpty(leg.line)).Select(leg => leg.line).FirstOrDefault() ?? "Unknown",
-                            FromStop = nearestStations1[0].Name,
-                            ToStop = nearestStations2[0].Name
-                        },
-                        new HybridRouteSegment
-                        {
-                            Type = "walk",
-                            Polyline = decodedPoints2.Select(point => new List<double> { point.Latitude, point.Longitude }).ToList(),
-                            DurationSeconds = walkingRoute2.Path[0].time / 1000,
-                            DistanceMeters = (int)walkFromDistance
-                        }
-                    };
+                            Polyline = stopoverPolyline,
+                            precisePolyline = new List<List<List<double>>> { precisePolyline },
+                            DurationSeconds = (int)(leg.arrival_time.ToUnixTimeSeconds() - leg.departure_time.ToUnixTimeSeconds()),
+                            DistanceMeters = leg.distance ?? 0,
+                            TransportType = leg.type ?? "Unknown",
+                            TransportLine = string.IsNullOrEmpty(leg.line) ? "Unknown" : leg.line,
+                            FromStop = leg.start.name ?? "Unknown",
+                            ToStop = leg.end.name ?? "Unknown"
+                        });
+                    }
 
-                    int overalltime = (walkingTime1 + walkingRoute2.Path[0].time) / 1000 + trDuration; // in seconds
+                    // Add walking segment FROM station
+                    segments.Add(new HybridRouteSegment
+                    {
+                        Type = "walk",
+                        Polyline = decodedPoints2.Select(p => new List<double> { p.Latitude, p.Longitude }).ToList(),
+                        DurationSeconds = walkingRoute2.Path[0].time / 1000,
+                        DistanceMeters = (int)walkFromDistance
+                    });
 
-                    var temp = new TransitRouteResponse
+                    int totalDuration = segments.Sum(s => s.DurationSeconds);
+                    int totalDistance = segments.Sum(s => s.DistanceMeters);
+
+                    var response = new TransitRouteResponse
                     {
                         Type = "Hybrid",
                         Start = new List<double> { decodedPoints1[0].Latitude, decodedPoints1[0].Longitude },
-                        End = new List<double> { decodedPoints2[decodedPoints2.Count - 1].Latitude, decodedPoints2[decodedPoints2.Count - 1].Longitude },
+                        End = new List<double> { decodedPoints2[^1].Latitude, decodedPoints2[^1].Longitude },
                         Segments = segments,
-                        DurationSeconds = overalltime,
-                        DistanceMeters = segments.Sum(s => s.DistanceMeters)
+                        DurationSeconds = totalDuration,
+                        DistanceMeters = totalDistance
                     };
 
-                    transitRouteResponses.Add(temp);
+                    transitRouteResponses.Add(response);
                 }
             }
 
-
-            // Sort the list of TransitRouteResponses by DurationSeconds
             var sortedResponses = transitRouteResponses.OrderBy(r => r.DurationSeconds).ToList();
 
             if (sortedResponses.Count == 0)
@@ -262,10 +205,7 @@ namespace Backend.Services
                 return "No valid hybrid route found.";
             }
 
-            var finalResponse = JsonSerializer.Serialize(sortedResponses[0]); // Serialize the first (shortest) response
-
-            return finalResponse;
+            return JsonSerializer.Serialize(sortedResponses[0]);
         }
     }
-    
 }
