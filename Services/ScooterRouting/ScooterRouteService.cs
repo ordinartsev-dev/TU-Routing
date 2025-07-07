@@ -66,8 +66,21 @@ namespace Backend.Services
             for (int i = 0; i < points.Count - 1; i++)
             {
                 int toIndex = i + 1;
-                var fromLatitude = points[i][0];
-                var fromLongitude = points[i][1];
+
+                var fromLatitude = 0.0;
+                var fromLongitude = 0.0;
+                
+                if (i == 0)
+                {
+                    fromLatitude = scooters.bike[0].lat;
+                    fromLongitude = scooters.bike[0].lon;
+                }
+                else
+                {
+                    fromLatitude = points[i][0];
+                    fromLongitude = points[i][1];
+                }
+                
                 var toLatitude = points[toIndex][0];
                 var toLongitude = points[toIndex][1];
                 var temp = await findRouteToEndPoint(fromLatitude, fromLongitude, toLatitude, toLongitude);
