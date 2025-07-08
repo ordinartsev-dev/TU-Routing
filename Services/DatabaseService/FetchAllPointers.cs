@@ -42,7 +42,7 @@ namespace Backend.Services {
                     ContourWKT = p.Contour != null ? p.Contour.AsText() : null,
                     Rooms = _dbContext.Rooms
                         .Where(r => r.PlaceId == p.Id)
-                        .Select(r => r.Name)
+                        .Select(r => r.RoomNumber)
                         .ToList()
                 })
                 .ToListAsync();
