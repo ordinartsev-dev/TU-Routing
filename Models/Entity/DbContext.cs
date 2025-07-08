@@ -12,6 +12,7 @@ namespace Backend.Models
 
         public DbSet<Place> Places { get; set; }
         public DbSet<Entrance> Entrances { get; set; }
+        public DbSet<RoomEntity> Rooms { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
