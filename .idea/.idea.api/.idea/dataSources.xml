@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="tubify@localhost" uuid="26c41a78-0a14-45b0-a4a1-94b0b82b7dc9">
+    <data-source source="LOCAL" name="mydatabase@localhost" uuid="26c41a78-0a14-45b0-a4a1-94b0b82b7dc9">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>

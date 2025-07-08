@@ -25,6 +25,7 @@ namespace Backend.Services {
             public double Latitude { get; set; }
             public double Longitude { get; set; }
             public string? ContourWKT { get; set; } // Можна додати ще контур як WKT (текстове представлення геометрії)
+            public List<string?> Rooms { get; set; } = new List<string>();
         }
 
         public async Task<List<PlaceDto>> GetAllPointersAsync()
@@ -38,7 +39,11 @@ namespace Backend.Services {
                     Description = p.Description,
                     Latitude = p.Latitude,
                     Longitude = p.Longitude,
-                    ContourWKT = p.Contour != null ? p.Contour.AsText() : null
+                    ContourWKT = p.Contour != null ? p.Contour.AsText() : null,
+                    Rooms = _dbContext.Rooms
+                        .Where(r => r.PlaceId == p.Id)
+                        .Select(r => r.Name)
+                        .ToList()
                 })
                 .ToListAsync();
         }
