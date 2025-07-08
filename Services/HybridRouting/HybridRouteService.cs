@@ -161,6 +161,8 @@ namespace Backend.Services
                         segments.Add(new HybridRouteSegment
                         {
                             Type = "transit",
+                            DepartureTime = leg.departure_time.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                            ArrivalTime = leg.arrival_time.ToString("yyyy-MM-ddTHH:mm:ssZ"),
                             Polyline = stopoverPolyline,
                             precisePolyline = new List<List<List<double>>> { precisePolyline },
                             DurationSeconds = (int)(leg.arrival_time.ToUnixTimeSeconds() - leg.departure_time.ToUnixTimeSeconds()),

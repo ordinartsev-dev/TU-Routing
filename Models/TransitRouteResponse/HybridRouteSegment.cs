@@ -11,4 +11,6 @@ public class HybridRouteSegment
     public string? TransportLine { get; set; }
     public string? FromStop { get; set; }
     public string? ToStop { get; set; }
+    public string DepartureTime { get; set; }
+    public string ArrivalTime { get; set; }
 }
