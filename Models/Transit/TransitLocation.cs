@@ -8,8 +8,8 @@ namespace Backend.Models
         public string name { get; set; }
         [JsonPropertyName("latitude")]
         public double latitude { get; set; }
-        [JsonPropertyName("longtitude")]
-        public double longtitude { get; set; }
+        [JsonPropertyName("longitude")]
+        public double longitude { get; set; }
         [JsonPropertyName("is_stop")]
         public bool is_stop { get; set; }
     }
