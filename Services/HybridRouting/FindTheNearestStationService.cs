@@ -20,7 +20,7 @@ namespace Backend.Services
         {
             try 
             {
-                string url = $"https://tubify-external-api:8000/api/nearest-stations?coords={Lat},{Lon}&results=2";
+                string url = $"http://tubify-external-api:8000/api/nearest-stations?coords={Lat},{Lon}&results=2";
                 
                 HttpResponseMessage response = await _httpClient.GetAsync(url);
                 response.EnsureSuccessStatusCode();
