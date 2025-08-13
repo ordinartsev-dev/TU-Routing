@@ -21,7 +21,7 @@ namespace Backend.Services
         {
             try
             {
-                string url = $"http://tubify-external-api:8000/api/bikes/nearby?coords={Lat},{Lon}&radius=500&limit=10";
+                string url = $"https://dev.cherep.co/tubify/api/bikes/nearby?coords={Lat},{Lon}&radius=500&limit=10";
             
                 HttpResponseMessage response = await _httpClient.GetAsync(url);
                 response.EnsureSuccessStatusCode();
