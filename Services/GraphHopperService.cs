@@ -11,7 +11,7 @@ namespace Backend.Services
     {
         private readonly HttpClient _httpClient;
 
-        private const string GraphHopperUrl = "https://dev.cherep.co/tubify/api/graphhopper/route";
+        private const string GraphHopperUrl = "http://tubify-graphhopper:8989/route";
 
         public GraphHopperService(HttpClient httpClient)
         {
@@ -258,4 +258,5 @@ namespace Backend.Services
         }
     }
 }
+
 
