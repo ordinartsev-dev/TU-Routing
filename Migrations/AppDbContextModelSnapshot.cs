@@ -96,6 +96,9 @@ namespace api.Migrations
                     b.Property<int>("PlaceId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("RoomGroup")
+                        .HasColumnType("integer");
+
                     b.Property<string>("RoomNumber")
                         .IsRequired()
                         .HasColumnType("text");

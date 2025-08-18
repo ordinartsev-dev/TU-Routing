@@ -17,6 +17,8 @@ namespace Backend.Models
         // Foreign key
         [ForeignKey("Place")]
         public int PlaceId { get; set; }
+        
+        public int RoomGroup {get; set;}
 
         public Place Place { get; set; } = null!;
     }
