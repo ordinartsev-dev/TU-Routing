@@ -20,6 +20,8 @@ namespace Backend.Models
         
         public int RoomGroup {get; set;}
 
+        public int RoomGroup { get; set; } // ID групи кімнат, якщо є
+
         public Place Place { get; set; } = null!;
     }
 }

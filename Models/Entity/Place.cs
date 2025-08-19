@@ -19,6 +19,10 @@ namespace Backend.Models
 
         public Place()
         {
+            Name = string.Empty;
+            Category = string.Empty;
+            Description = string.Empty;
+            Contour = new GeometryFactory().CreatePoint(); // Пример геометрии по умолчанию
         }
 
         public Place(int id, string name, string category, string description, double latitude, double longitude,
