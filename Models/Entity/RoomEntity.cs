@@ -17,8 +17,6 @@ namespace Backend.Models
         // Foreign key
         [ForeignKey("Place")]
         public int PlaceId { get; set; }
-        
-        public int RoomGroup {get; set;}
 
         public int RoomGroup { get; set; } // ID групи кімнат, якщо є
 
